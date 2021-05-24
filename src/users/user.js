@@ -3,7 +3,13 @@ const HelperService = require('../utils/helper');
 
 class UserService {
 	static async creatUser(req, res) {
-		const user = new User(req.body);
+		const userData = req.body;
+		if (userData.password) {
+			const saltRounds = 10;
+			userData.password = await bcrypt.hash(userData.password, saltRounds);
+		}
+
+		const user = new User(userData);
 
 		try {
 			await user.save();
