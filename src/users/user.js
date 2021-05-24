@@ -55,12 +55,13 @@ class UserService {
 		const _id = req.params.id;
 
 		try {
-			const updatedUser = await User.findByIdAndUpdate(_id, req.body, {
-				lean: true,
-				new: true,
-				runValidators: true,
-			});
-			HelperService.handleSuccess(req, res, updatedUser);
+			const user = await User.findById(_id);
+
+			fields.forEach((field) => (user[field] = req.body[field]));
+
+			await user.save();
+
+			HelperService.handleSuccess(req, res, user);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
