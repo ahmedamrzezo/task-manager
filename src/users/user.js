@@ -13,6 +13,15 @@ class UserService {
 		}
 	}
 
+	static async getUsers(req, res) {
+		try {
+			const users = await User.find({});
+			HelperService.handleSuccess(req, res, users);
+		} catch (error) {
+			HelperService.handleError(req, res, error);
+		}
+	}
+
 	static async getUserById(req, res) {
 		const _id = req.params.id;
 		try {
