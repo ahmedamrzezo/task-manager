@@ -8,12 +8,7 @@ class HelperService {
 		res.status(statusCode).send(errorObj);
 	}
 
-	static handleSuccess(req, res, data) {
-		let statusCode = 200;
-		if (req.method === 'POST') {
-			statusCode = 201;
-		}
-
+	static handleSuccess(res, data, statusCode = 200) {
 		if (!data) {
 			return res.status(404).send();
 		}

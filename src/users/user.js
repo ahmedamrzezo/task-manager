@@ -7,7 +7,7 @@ class UserService {
 
 		try {
 			await user.save();
-			HelperService.handleSuccess(req, res, user);
+			HelperService.handleSuccess(res, user, 201);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
@@ -16,7 +16,7 @@ class UserService {
 	static async getUsers(req, res) {
 		try {
 			const users = await User.find({});
-			HelperService.handleSuccess(req, res, users);
+			HelperService.handleSuccess(res, users);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
@@ -26,7 +26,7 @@ class UserService {
 		const _id = req.params.id;
 		try {
 			const user = await User.findById(_id);
-			HelperService.handleSuccess(req, res, user);
+			HelperService.handleSuccess(res, user);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
@@ -55,7 +55,7 @@ class UserService {
 
 			await user.save();
 
-			HelperService.handleSuccess(req, res, user);
+			HelperService.handleSuccess(res, user);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
@@ -67,11 +67,20 @@ class UserService {
 		try {
 			if (_id == 'all') {
 				await User.deleteMany({});
-				HelperService.handleSuccess(req, res, []);
+				HelperService.handleSuccess(res, []);
 			} else {
 				const user = await User.findByIdAndDelete(_id);
-				HelperService.handleSuccess(req, res, user);
+				HelperService.handleSuccess(res, user);
 			}
+		} catch (error) {
+			HelperService.handleError(req, res, error);
+		}
+	}
+
+	static async loginUser(req, res) {
+		try {
+			const user = await User.validateCredentials(req.body);
+			HelperService.handleSuccess(res, user);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}

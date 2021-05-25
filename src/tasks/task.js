@@ -6,7 +6,7 @@ class TaskService {
 		const newTask = new Task(req.body);
 		try {
 			const data = await newTask.save();
-			HelperService.handleSuccess(req, res, data);
+			HelperService.handleSuccess(res, data);
 		} catch (error) {
 			HelperService.handleError(res, error);
 		}
@@ -15,7 +15,7 @@ class TaskService {
 	static async getTasks(req, res) {
 		try {
 			const tasks = await Task.find({});
-			HelperService.handleSuccess(req, res, tasks);
+			HelperService.handleSuccess(res, tasks);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
@@ -25,7 +25,7 @@ class TaskService {
 		const _id = req.params.id;
 		try {
 			const task = await Task.findById(_id);
-			HelperService.handleSuccess(req, res, task);
+			HelperService.handleSuccess(res, task);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
@@ -53,7 +53,7 @@ class TaskService {
 
 			await task.save();
 
-			HelperService.handleSuccess(req, res, task);
+			HelperService.handleSuccess(res, task);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
@@ -64,7 +64,7 @@ class TaskService {
 
 		try {
 			const task = await Task.findByIdAndDelete(_id);
-			HelperService.handleSuccess(req, res, task);
+			HelperService.handleSuccess(res, task);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
