@@ -7,7 +7,10 @@ class UserService {
 
 		try {
 			await user.save();
-			HelperService.handleSuccess(res, user, 201);
+
+			const token = await user.generateToken();
+
+			HelperService.handleSuccess(res, { user, token }, 201);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
@@ -80,7 +83,10 @@ class UserService {
 	static async loginUser(req, res) {
 		try {
 			const user = await User.validateCredentials(req.body);
-			HelperService.handleSuccess(res, user);
+
+			const token = await user.generateToken();
+
+			HelperService.handleSuccess(res, { user, token });
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}

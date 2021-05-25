@@ -4,6 +4,8 @@ const validator = require('validator');
 
 const bcrypt = require('bcrypt');
 
+const jwt = require('jsonwebtoken');
+
 const schema = new mongoose.Schema({
 	name: {
 		type: String,
@@ -35,7 +37,30 @@ const schema = new mongoose.Schema({
 			}
 		},
 	},
+	tokens: [
+		{
+			token: {
+				type: String,
+				required: true,
+			},
+		},
+	],
 });
+
+/**
+ * generate authentication token
+ * @param {id} userId
+ * @returns {token}
+ */
+
+schema.methods.generateToken = async function () {
+	const token = jwt.sign({ _id: this._id.toString() }, 'qwertyasdfgh', {
+		expiresIn: '1 hour',
+	});
+	this.tokens = this.tokens.concat({ token });
+	await this.save();
+	return token;
+};
 
 // validate user credentials
 schema.statics.validateCredentials = async ({ email, password }) => {
@@ -48,9 +73,6 @@ schema.statics.validateCredentials = async ({ email, password }) => {
 	const isValidPassword = await bcrypt.compare(password, user.password);
 
 	if (isValidPassword) {
-		// give acess token
-		user.token = 1234;
-		console.log(user);
 		return user;
 	} else {
 		throw new Error('Invalid Credentials!');
