@@ -13,6 +13,7 @@ const schema = new mongoose.Schema({
 	email: {
 		type: String,
 		required: true,
+		unique: true,
 		trim: true,
 		lowercase: true,
 		validate(value) {
@@ -36,6 +37,27 @@ const schema = new mongoose.Schema({
 	},
 });
 
+// validate user credentials
+schema.statics.validateCredentials = async ({ email, password }) => {
+	const user = await User.findOne({ email });
+
+	if (!user) {
+		throw new Error('Unable to login!');
+	}
+
+	const isValidPassword = await bcrypt.compare(password, user.password);
+
+	if (isValidPassword) {
+		// give acess token
+		user.token = 1234;
+		console.log(user);
+		return user;
+	} else {
+		throw new Error('Invalid Credentials!');
+	}
+};
+
+// middle ware for hashing password before saving
 schema.pre('save', async function (next) {
 	if (this.password) {
 		const saltRounds = 10;
