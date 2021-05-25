@@ -47,13 +47,13 @@ class TaskService {
 
 		const _id = req.params.id;
 		try {
-			const updatedTask = await Task.findByIdAndUpdate(_id, req.body, {
-				lean: true,
-				runValidators: true,
-				new: true,
-			});
+			let task = await Task.findById(_id);
 
-			HelperService.handleSuccess(req, res, updatedTask);
+			fields.forEach((field) => (task[field] = req.body[field]));
+
+			await task.save();
+
+			HelperService.handleSuccess(req, res, task);
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
