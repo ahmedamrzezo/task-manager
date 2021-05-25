@@ -65,8 +65,13 @@ class UserService {
 		const _id = req.params.id;
 
 		try {
-			const user = await User.findByIdAndDelete(_id);
-			HelperService.handleSuccess(req, res, user);
+			if (_id == 'all') {
+				await User.deleteMany({});
+				HelperService.handleSuccess(req, res, []);
+			} else {
+				const user = await User.findByIdAndDelete(_id);
+				HelperService.handleSuccess(req, res, user);
+			}
 		} catch (error) {
 			HelperService.handleError(req, res, error);
 		}
