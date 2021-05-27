@@ -54,11 +54,12 @@ const schema = new mongoose.Schema({
  */
 
 schema.methods.generateToken = async function () {
-	const token = jwt.sign({ _id: this._id.toString() }, 'qwertyasdfgh', {
-		expiresIn: '1h',
+	const user = this;
+	const token = jwt.sign({ _id: user._id.toString() }, 'qwertyasdfgh', {
+		expiresIn: '1d',
 	});
-	this.tokens = this.tokens.concat({ token });
-	// await this.save();
+	user.tokens = user.tokens.concat({ token });
+	await user.save();
 	return token;
 };
 

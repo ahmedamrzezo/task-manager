@@ -7,7 +7,6 @@ class UserService {
 
 		try {
 			const token = await user.generateToken();
-			await user.save();
 
 			HelperService.handleSuccess(res, { user, token }, 201);
 		} catch (error) {
@@ -16,12 +15,7 @@ class UserService {
 	}
 
 	static async getUsers(req, res) {
-		try {
-			const users = await User.find({});
-			HelperService.handleSuccess(res, users);
-		} catch (error) {
-			HelperService.handleError(res, error, 500);
-		}
+		HelperService.handleSuccess(res, req.user);
 	}
 
 	static async getUserById(req, res) {
