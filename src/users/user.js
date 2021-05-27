@@ -28,6 +28,15 @@ class UserService {
 		const _id = req.params.id;
 		try {
 			const user = await User.findById(_id);
+
+			if (!user) {
+				return HelperService.handleError(
+					res,
+					{ error: 'User was not found!' },
+					404
+				);
+			}
+
 			HelperService.handleSuccess(res, user);
 		} catch (error) {
 			HelperService.handleError(res, error, 500);
