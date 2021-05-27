@@ -14,7 +14,7 @@ class UserService {
 		}
 	}
 
-	static async getUsers(req, res) {
+	static async getUserProfile(req, res) {
 		HelperService.handleSuccess(res, req.user);
 	}
 
