@@ -1,0 +1,27 @@
+const jwt = require('jsonwebtoken');
+const User = require('../users/models/user.model');
+const HelperService = require('../utils/helper');
+
+const auth = async (req, res, next) => {
+	const token = req.header('Authorization').replace('Bearer ', '');
+	try {
+		const decoded = jwt.verify(token, 'qwertyasdfgh');
+
+		const user = await User.findOne({
+			_id: decoded._id,
+			'tokens.token': token,
+		});
+
+		if (!user) {
+			throw new Error();
+		}
+
+		req.user = user;
+
+		next();
+	} catch (error) {
+		HelperService.handleError(res, { error }, 401);
+	}
+};
+
+module.exports = auth;
