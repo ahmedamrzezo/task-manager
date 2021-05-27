@@ -6,13 +6,12 @@ class UserService {
 		const user = new User(req.body);
 
 		try {
-			await user.save();
-
 			const token = await user.generateToken();
+			await user.save();
 
 			HelperService.handleSuccess(res, { user, token }, 201);
 		} catch (error) {
-			HelperService.handleError(req, res, error);
+			HelperService.handleError(res, error);
 		}
 	}
 
@@ -21,7 +20,7 @@ class UserService {
 			const users = await User.find({});
 			HelperService.handleSuccess(res, users);
 		} catch (error) {
-			HelperService.handleError(req, res, error);
+			HelperService.handleError(res, error, 500);
 		}
 	}
 
@@ -31,7 +30,7 @@ class UserService {
 			const user = await User.findById(_id);
 			HelperService.handleSuccess(res, user);
 		} catch (error) {
-			HelperService.handleError(req, res, error);
+			HelperService.handleError(res, error, 500);
 		}
 	}
 
@@ -44,7 +43,7 @@ class UserService {
 		);
 
 		if (!isValidUpdate) {
-			return HelperService.handleError(req, res, {
+			return HelperService.handleError(res, {
 				error: 'Invalid update field!',
 			});
 		}
@@ -60,7 +59,7 @@ class UserService {
 
 			HelperService.handleSuccess(res, user);
 		} catch (error) {
-			HelperService.handleError(req, res, error);
+			HelperService.handleError(res, error, 500);
 		}
 	}
 
@@ -76,7 +75,7 @@ class UserService {
 				HelperService.handleSuccess(res, user);
 			}
 		} catch (error) {
-			HelperService.handleError(req, res, error);
+			HelperService.handleError(res, error, 500);
 		}
 	}
 
@@ -88,7 +87,7 @@ class UserService {
 
 			HelperService.handleSuccess(res, { user, token });
 		} catch (error) {
-			HelperService.handleError(req, res, error);
+			HelperService.handleError(res, error);
 		}
 	}
 }

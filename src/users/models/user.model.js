@@ -55,10 +55,10 @@ const schema = new mongoose.Schema({
 
 schema.methods.generateToken = async function () {
 	const token = jwt.sign({ _id: this._id.toString() }, 'qwertyasdfgh', {
-		expiresIn: '1 hour',
+		expiresIn: '1h',
 	});
 	this.tokens = this.tokens.concat({ token });
-	await this.save();
+	// await this.save();
 	return token;
 };
 
@@ -67,7 +67,7 @@ schema.statics.validateCredentials = async ({ email, password }) => {
 	const user = await User.findOne({ email });
 
 	if (!user) {
-		throw new Error('Unable to login!');
+		throw new Error('Email does not exist, please sign up!');
 	}
 
 	const isValidPassword = await bcrypt.compare(password, user.password);
@@ -81,9 +81,10 @@ schema.statics.validateCredentials = async ({ email, password }) => {
 
 // middle ware for hashing password before saving
 schema.pre('save', async function (next) {
-	if (this.password) {
+	const user = this;
+	if (user.password) {
 		const saltRounds = 10;
-		this.password = await bcrypt.hash(this.password, saltRounds);
+		user.password = await bcrypt.hash(user.password, saltRounds);
 	}
 
 	next();

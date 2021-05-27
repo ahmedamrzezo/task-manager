@@ -17,7 +17,7 @@ class TaskService {
 			const tasks = await Task.find({});
 			HelperService.handleSuccess(res, tasks);
 		} catch (error) {
-			HelperService.handleError(req, res, error);
+			HelperService.handleError(res, error, 500);
 		}
 	}
 
@@ -27,7 +27,7 @@ class TaskService {
 			const task = await Task.findById(_id);
 			HelperService.handleSuccess(res, task);
 		} catch (error) {
-			HelperService.handleError(req, res, error);
+			HelperService.handleError(res, error, 500);
 		}
 	}
 
@@ -40,7 +40,7 @@ class TaskService {
 		);
 
 		if (!isValidUpdate) {
-			return HelperService.handleError(req, res, {
+			return HelperService.handleError(res, {
 				error: 'Invalid update field!',
 			});
 		}
@@ -55,7 +55,7 @@ class TaskService {
 
 			HelperService.handleSuccess(res, task);
 		} catch (error) {
-			HelperService.handleError(req, res, error);
+			HelperService.handleError(res, error, 500);
 		}
 	}
 
@@ -66,7 +66,7 @@ class TaskService {
 			const task = await Task.findByIdAndDelete(_id);
 			HelperService.handleSuccess(res, task);
 		} catch (error) {
-			HelperService.handleError(req, res, error);
+			HelperService.handleError(res, error, 500);
 		}
 	}
 }

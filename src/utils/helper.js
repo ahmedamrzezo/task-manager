@@ -1,9 +1,5 @@
 class HelperService {
-	static handleError(req, res, errorObj) {
-		let statusCode = 400;
-		if (req.method === 'GET') {
-			statusCode = 500;
-		}
+	static handleError(res, errorObj, statusCode = 400) {
 		console.log(errorObj);
 		res.status(statusCode).send(errorObj);
 	}
