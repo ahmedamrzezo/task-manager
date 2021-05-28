@@ -56,7 +56,7 @@ const schema = new mongoose.Schema({
 schema.methods.generateToken = async function () {
 	const user = this;
 	const token = jwt.sign({ _id: user._id.toString() }, 'qwertyasdfgh', {
-		expiresIn: '1d',
+		expiresIn: '2h',
 	});
 	user.tokens = user.tokens.concat({ token });
 	await user.save();
@@ -83,7 +83,7 @@ schema.statics.validateCredentials = async ({ email, password }) => {
 // middle ware for hashing password before saving
 schema.pre('save', async function (next) {
 	const user = this;
-	if (user.password) {
+	if (user.isModified('password')) {
 		const saltRounds = 10;
 		user.password = await bcrypt.hash(user.password, saltRounds);
 	}
