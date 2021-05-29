@@ -37,13 +37,17 @@ class UserService {
 			});
 		}
 
-		const _id = req.params.id;
-
 		try {
-			const user = await User.findById(_id);
+			const user = req.user;
 
-			fields.forEach((field) => (user[field] = req.body[field]));
-
+			fields.forEach((field) => {
+				if (typeof req.body[field] === 'object') {
+					const userOb = user.toObject();
+					return (user[field] = { ...userOb[field], ...req.body[field] });
+				}
+				return (user[field] = req.body[field]);
+			});
+			// console.log(user);
 			await user.save();
 
 			HelperService.handleSuccess(res, user);

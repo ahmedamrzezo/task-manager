@@ -8,16 +8,19 @@ const jwt = require('jsonwebtoken');
 
 const schema = new mongoose.Schema({
 	name: {
-		first: {
-			type: String,
-			required: true,
-			trim: true,
+		type: {
+			first: {
+				type: String,
+				required: true,
+				trim: true,
+			},
+			last: {
+				type: String,
+				required: true,
+				trim: true,
+			},
 		},
-		last: {
-			type: String,
-			required: true,
-			trim: true,
-		},
+		required: true,
 	},
 	email: {
 		type: String,
