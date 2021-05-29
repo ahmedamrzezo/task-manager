@@ -8,9 +8,16 @@ const jwt = require('jsonwebtoken');
 
 const schema = new mongoose.Schema({
 	name: {
-		type: String,
-		required: true,
-		trim: true,
+		first: {
+			type: String,
+			required: true,
+			trim: true,
+		},
+		last: {
+			type: String,
+			required: true,
+			trim: true,
+		},
 	},
 	email: {
 		type: String,
@@ -61,6 +68,16 @@ schema.methods.generateToken = async function () {
 	user.tokens = user.tokens.concat({ token });
 	await user.save();
 	return token;
+};
+
+schema.virtual('fullName').get(function () {
+	return `${this.name.first} ${this.name.last}`;
+});
+
+schema.methods.toJSON = function () {
+	const { id, email, fullName } = this.toObject({ virtuals: true });
+
+	return { id, email, fullName };
 };
 
 // validate user credentials
