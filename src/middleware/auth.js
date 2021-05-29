@@ -14,7 +14,7 @@ const auth = async (req, res, next) => {
 		});
 
 		if (!user) {
-			HelperService.handleError(res, { error: 'You are not authorized' }, 401);
+			throw new Error('You are not authorized');
 		}
 
 		req.token = token;
