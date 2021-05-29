@@ -17,7 +17,6 @@ class UserService {
 	}
 
 	static async getUserProfile(req, res) {
-		console.log(req.expiresIn);
 		HelperService.handleSuccess(res, {
 			user: req.user,
 			expiresIn: req.expiresIn,
