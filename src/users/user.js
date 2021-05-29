@@ -6,6 +6,8 @@ class UserService {
 		const user = new User(req.body);
 
 		try {
+			await user.save();
+
 			const token = await user.generateToken();
 
 			HelperService.handleSuccess(res, { user, token }, 201);
@@ -91,6 +93,32 @@ class UserService {
 			HelperService.handleSuccess(res, { user, token });
 		} catch (error) {
 			HelperService.handleError(res, error);
+		}
+	}
+
+	static async logoutUser(req, res) {
+		try {
+			const currentToken = req.token;
+			req.user.tokens = req.user.tokens.filter(
+				(token) => token.token !== currentToken
+			);
+
+			await req.user.save();
+
+			HelperService.handleSuccess(res, ' ', 200);
+		} catch (error) {
+			HelperService.handleError(res, error, 500);
+		}
+	}
+	static async logoutAll(req, res) {
+		try {
+			req.user.tokens = [];
+
+			await req.user.save();
+
+			HelperService.handleSuccess(res, req.user, 200);
+		} catch (error) {
+			HelperService.handleError(res, error, 500);
 		}
 	}
 }
