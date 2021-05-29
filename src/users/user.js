@@ -23,25 +23,6 @@ class UserService {
 		});
 	}
 
-	static async getUserById(req, res) {
-		const _id = req.params.id;
-		try {
-			const user = await User.findById(_id);
-
-			if (!user) {
-				return HelperService.handleError(
-					res,
-					{ error: 'User was not found!' },
-					404
-				);
-			}
-
-			HelperService.handleSuccess(res, user);
-		} catch (error) {
-			HelperService.handleError(res, error, 500);
-		}
-	}
-
 	static async updateUser(req, res) {
 		const fields = Object.keys(req.body);
 		const allowedFields = ['name', 'email', 'password'];
@@ -72,16 +53,9 @@ class UserService {
 	}
 
 	static async deleteUser(req, res) {
-		const _id = req.params.id;
-
 		try {
-			if (_id == 'all') {
-				await User.deleteMany({});
-				HelperService.handleSuccess(res, []);
-			} else {
-				const user = await User.findByIdAndDelete(_id);
-				HelperService.handleSuccess(res, user);
-			}
+			await req.user.remove();
+			HelperService.handleSuccess(res, req.user);
 		} catch (error) {
 			HelperService.handleError(res, error, 500);
 		}
