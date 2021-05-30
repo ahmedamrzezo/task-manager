@@ -3,7 +3,10 @@ const HelperService = require('../utils/helper');
 
 class TaskService {
 	static async createTask(req, res) {
-		const newTask = new Task(req.body);
+		const newTask = new Task({
+			...req.body,
+			createdBy: req.user._id,
+		});
 		try {
 			const data = await newTask.save();
 			HelperService.handleSuccess(res, data);
@@ -14,8 +17,8 @@ class TaskService {
 
 	static async getTasks(req, res) {
 		try {
-			const tasks = await Task.find({});
-			HelperService.handleSuccess(res, tasks);
+			await req.user.populate('tasks').execPopulate();
+			HelperService.handleSuccess(res, req.user.tasks);
 		} catch (error) {
 			HelperService.handleError(res, error, 500);
 		}
@@ -24,7 +27,7 @@ class TaskService {
 	static async getTaskById(req, res) {
 		const _id = req.params.id;
 		try {
-			const task = await Task.findById(_id);
+			const task = await Task.findOne({ _id, createdBy: req.user._id });
 			HelperService.handleSuccess(res, task);
 		} catch (error) {
 			HelperService.handleError(res, error, 500);
@@ -47,11 +50,12 @@ class TaskService {
 
 		const _id = req.params.id;
 		try {
-			let task = await Task.findById(_id);
+			const task = await Task.findOne({ _id, createdBy: req.user._id });
 
-			fields.forEach((field) => (task[field] = req.body[field]));
-
-			await task.save();
+			if (task) {
+				fields.forEach((field) => (task[field] = req.body[field]));
+				await task.save();
+			}
 
 			HelperService.handleSuccess(res, task);
 		} catch (error) {
@@ -63,7 +67,10 @@ class TaskService {
 		const _id = req.params.id;
 
 		try {
-			const task = await Task.findByIdAndDelete(_id);
+			const task = await Task.findOneAndDelete({
+				_id,
+				createdBy: req.user._id,
+			});
 			HelperService.handleSuccess(res, task);
 		} catch (error) {
 			HelperService.handleError(res, error, 500);

@@ -58,6 +58,15 @@ const schema = new mongoose.Schema({
 });
 
 /**
+ * create virtual for tasks to be linked with user
+ */
+schema.virtual('tasks', {
+	ref: 'Task',
+	localField: '_id',
+	foreignField: 'createdBy',
+});
+
+/**
  * generate authentication token
  * @param {id} userId
  * @returns {token}
