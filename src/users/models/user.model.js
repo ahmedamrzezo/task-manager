@@ -120,6 +120,19 @@ schema.pre('save', async function (next) {
 	next();
 });
 
+/**
+ * delete user tasks when the user is deleted
+ */
+
+schema.pre('remove', async function (next) {
+	const user = await this.populate('tasks').execPopulate();
+	const promises = user.tasks.map((task) => task.deleteOne({ _id: task._id }));
+
+	await Promise.all(promises);
+
+	next();
+});
+
 const User = mongoose.model('User', schema);
 
 module.exports = User;
