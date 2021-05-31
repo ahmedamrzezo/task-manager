@@ -7,6 +7,7 @@ class TaskService {
 			...req.body,
 			createdBy: req.user._id,
 		});
+
 		try {
 			const data = await newTask.save();
 			HelperService.handleSuccess(res, data);
@@ -17,7 +18,12 @@ class TaskService {
 
 	static async getTasks(req, res) {
 		try {
-			await req.user.populate('tasks').execPopulate();
+			await req.user.populate({
+				path: 'tasks',
+				match: {
+					completed: false
+				}
+			}).execPopulate();
 			HelperService.handleSuccess(res, req.user.tasks);
 		} catch (error) {
 			HelperService.handleError(res, error, 500);
@@ -67,11 +73,16 @@ class TaskService {
 		const _id = req.params.id;
 
 		try {
-			const task = await Task.findOneAndDelete({
-				_id,
-				createdBy: req.user._id,
-			});
-			HelperService.handleSuccess(res, task);
+			let task;
+			if (_id === 'all') {
+				await Task.deleteMany({ createdBy: req.user._id });
+			} else {
+				task = await Task.findOneAndDelete({
+					_id,
+					createdBy: req.user._id,
+				});
+			}
+			HelperService.handleSuccess(res, task || ' ');
 		} catch (error) {
 			HelperService.handleError(res, error, 500);
 		}
