@@ -24,6 +24,12 @@ const schema = new mongoose.Schema({
 	timestamps: true
 });
 
-const Task = mongoose.model('Task', schema)
+schema.set('toJSON', {
+	virtuals: true,
+	versionKey: false,
+	transform: function (doc, ret) { delete ret._id; }
+});
+
+const Task = mongoose.model('Task', schema);
 
 module.exports = Task;
