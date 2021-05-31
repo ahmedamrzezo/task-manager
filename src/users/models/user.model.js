@@ -42,19 +42,23 @@ const schema = new mongoose.Schema({
 			if (value.match(/password/i)) {
 				throw new Error('Your password mustn\'t contain "password" keyword!');
 			}
-			if (!validator.isLength(value, { min: 6 })) {
+			if (
+				!validator.isLength(value, {
+					min: 6,
+				})
+			) {
 				throw new Error('Your password must be more than 6 chars!');
 			}
 		},
 	},
-	tokens: [
-		{
-			token: {
-				type: String,
-				required: true,
-			},
+	tokens: [{
+		token: {
+			type: String,
+			required: true,
 		},
-	],
+	}, ],
+}, {
+	timestamps: true,
 });
 
 /**
@@ -74,10 +78,16 @@ schema.virtual('tasks', {
 
 schema.methods.generateToken = async function () {
 	const user = this;
-	const token = jwt.sign({ _id: user._id.toString() }, 'qwertyasdfgh', {
-		expiresIn: '2h',
+	const token = jwt.sign({
+			_id: user._id.toString(),
+		},
+		'qwertyasdfgh', {
+			expiresIn: '2h',
+		}
+	);
+	user.tokens = user.tokens.concat({
+		token,
 	});
-	user.tokens = user.tokens.concat({ token });
 	await user.save();
 	return token;
 };
@@ -87,14 +97,27 @@ schema.virtual('fullName').get(function () {
 });
 
 schema.methods.toJSON = function () {
-	const { id, email, fullName } = this.toObject({ virtuals: true });
+	const user = this.toObject({
+		virtuals: true,
+	});
 
-	return { id, email, fullName };
+	delete user.password;
+	delete user.tokens;
+	delete user.name;
+	delete user._id;
+	delete user.__v;
+
+	return user;
 };
 
 // validate user credentials
-schema.statics.validateCredentials = async ({ email, password }) => {
-	const user = await User.findOne({ email });
+schema.statics.validateCredentials = async ({
+	email,
+	password
+}) => {
+	const user = await User.findOne({
+		email,
+	});
 
 	if (!user) {
 		throw new Error('Email does not exist, please sign up!');
@@ -126,7 +149,11 @@ schema.pre('save', async function (next) {
 
 schema.pre('remove', async function (next) {
 	const user = await this.populate('tasks').execPopulate();
-	const promises = user.tasks.map((task) => task.deleteOne({ _id: task._id }));
+	const promises = user.tasks.map((task) =>
+		task.deleteOne({
+			_id: task._id,
+		})
+	);
 
 	await Promise.all(promises);
 
