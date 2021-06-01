@@ -17,11 +17,29 @@ class TaskService {
 	}
 
 	static async getTasks(req, res) {
+		const match = {};
+		const completed = req.query.completed;
+		const limit = +req.query.limit;
+		const skip = +req.query.skip;
+		const sort = {};
+
+		if (completed) {
+			match.completed = completed === 'true';
+		}
+
+		if (req.query.sortBy) {
+			const sortStr = req.query.sortBy.split(':');
+			sort[sortStr[0]] = sortStr[1] === 'desc' ? -1 : 1;
+
+		}
 		try {
 			await req.user.populate({
 				path: 'tasks',
-				match: {
-					completed: false
+				match,
+				options: {
+					limit,
+					skip,
+					sort
 				}
 			}).execPopulate();
 			HelperService.handleSuccess(res, req.user.tasks);
