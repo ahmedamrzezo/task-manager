@@ -1,5 +1,6 @@
 const User = require('./models/user.model');
 const HelperService = require('../utils/helper');
+const { sendWelcomeEmail } = require('../emails/account');
 
 class UserService {
 	static async creatUser(req, res) {
@@ -7,6 +8,8 @@ class UserService {
 
 		try {
 			await user.save();
+
+			await sendWelcomeEmail(user.email, user.fullName);
 
 			const token = await user.generateToken();
 
