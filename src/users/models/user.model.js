@@ -56,7 +56,10 @@ const schema = new mongoose.Schema({
 			type: String,
 			required: true,
 		},
-	}, ],
+	},],
+	avatar: {
+		type: Buffer
+	}
 }, {
 	timestamps: true,
 });
@@ -79,11 +82,11 @@ schema.virtual('tasks', {
 schema.methods.generateToken = async function () {
 	const user = this;
 	const token = jwt.sign({
-			_id: user._id.toString(),
-		},
+		_id: user._id.toString(),
+	},
 		'qwertyasdfgh', {
-			expiresIn: '2h',
-		}
+		expiresIn: '2h',
+	}
 	);
 	user.tokens = user.tokens.concat({
 		token,
@@ -96,6 +99,10 @@ schema.virtual('fullName').get(function () {
 	return `${this.name.first} ${this.name.last}`;
 });
 
+schema.virtual('avatarUrl').get(function () {
+	return `/users/${this.id}/avatar`;
+});
+
 schema.methods.toJSON = function () {
 	const user = this.toObject({
 		virtuals: true,
@@ -106,6 +113,7 @@ schema.methods.toJSON = function () {
 	delete user.name;
 	delete user._id;
 	delete user.__v;
+	delete user.avatar;
 
 	return user;
 };
