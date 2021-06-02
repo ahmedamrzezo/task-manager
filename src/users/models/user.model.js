@@ -84,7 +84,7 @@ schema.methods.generateToken = async function () {
 	const token = jwt.sign({
 		_id: user._id.toString(),
 	},
-		'qwertyasdfgh', {
+		process.env.JWT_SECRET, {
 		expiresIn: '2h',
 	}
 	);
