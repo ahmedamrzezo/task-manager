@@ -8,7 +8,7 @@ const userRouter = require('./users/router/users.router');
 const taskRouter = require('./tasks/router/tasks.router');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 app.use(express.json());
 
