@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node src/app.js",
     "serve": "env-cmd -f ./config/dev.env nodemon src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "env-cmd -f ./config/test.env jest --watch"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "keywords": [],
   "author": "Ahmed Amr Zezo",
@@ -23,6 +26,8 @@
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",
-    "nodemon": "^2.0.7"
+    "jest": "^27.0.4",
+    "nodemon": "^2.0.7",
+    "supertest": "^6.1.3"
   }
 }
